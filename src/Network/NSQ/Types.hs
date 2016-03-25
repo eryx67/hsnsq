@@ -26,9 +26,10 @@ module Network.NSQ.Types
 
     ) where
 
-import Data.Int
-import Data.Word
-import Network
+import           Data.Int
+import           Data.Word
+import           Network
+import           Prelude
 
 import qualified Data.ByteString as BS
 import qualified Data.Map.Strict as Map
@@ -52,7 +53,7 @@ data NSQConnection = NSQConnection
     }
 
 -- | Logger Name for a connection (hslogger format)
-type LogName = String
+type LogName = T.Text
 
 -- | Message Id, it is a 16-byte hexdecimal string encoded as ASCII
 type MsgId = BS.ByteString

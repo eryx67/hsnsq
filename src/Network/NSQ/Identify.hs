@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 {-|
 Module      : Network.NSQ.Identify
 Description : The metadata component for formatting and parsing the metadata sent to nsqd as part of the feature negotiation done upon connection establish.
@@ -10,8 +11,7 @@ module Network.NSQ.Identify
 
     ) where
 
-import Prelude hiding (take)
-import Data.Maybe
+import ClassyPrelude hiding (take)
 
 import qualified Data.Map.Strict as Map
 

@@ -1,0 +1,10 @@
+flags: {}
+extra-package-dbs: []
+packages:
+  - '.'
+  - location:
+      git: git@github.com:eryx67/api-builder.git
+      commit: d7292cf664464a38a95a76811c3445d41609621b
+extra-deps:
+- attoparsec-binary-0.2
+resolver: lts-5.6
