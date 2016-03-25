@@ -3,7 +3,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 -- | API to <http://nsq.io/components/nsqlookupd.html NSQLOOKUPD>
--- |
+-- 
 -- @
 --    let nsqlookupUrl = "http://192.168.0.33:4161"::Text
 --    nsqlookupExec nsqlookupUrl $ channels "clients"
@@ -14,6 +14,8 @@ module Network.NSQ.Lookup
        ( -- * NSQLOOKUPD API
          -- ** API Monad
          NsqLookup
+       , nsqlookupExec
+       , nsqlookupRun
          -- ** Return data
        , Error(..)
        , Producer(..)
@@ -21,8 +23,6 @@ module Network.NSQ.Lookup
        , OK
        , Info(..)
          -- ** Queries
-       , nsqlookupExec
-       , nsqlookupRun
        , topics
        , lookup
        , channels
