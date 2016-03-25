@@ -46,6 +46,8 @@ import Network.API.Builder
 import Network.HTTP.Client (Manager, responseBody)
 import Text.Read (readEither)
 
+import Network.NSQ.Types (Channel, Topic)
+
 -- | API monad
 type NsqLookup m a = APIT () Error m a
 
@@ -66,15 +68,15 @@ nsqlookupRun url mgr q = do
   (r, b, _) <- runAPI (mkBuilder url) mgr () q
   return (r, b)
 
-topics :: MonadIO m => NsqLookup m [Text] 
+topics :: MonadIO m => NsqLookup m [Topic] 
 topics =
   topicsTopicks . resultData <$> runRoute topicsRoute
 
-lookup :: MonadIO m => Text -> NsqLookup m Lookup
+lookup :: MonadIO m => Topic -> NsqLookup m Lookup
 lookup topic =
   resultData <$> runRoute (lookupRoute topic)
 
-channels :: MonadIO m => Text -> NsqLookup m [Text]
+channels :: MonadIO m => Topic -> NsqLookup m [Channel]
 channels topic =
   channelsChannels . resultData <$> runRoute (channelsRoute topic)
 
@@ -82,15 +84,15 @@ nodes :: MonadIO m => NsqLookup m [Producer]
 nodes =
   nodesProducers . resultData <$> runRoute nodesRoute
 
-deleteTopic :: MonadIO m => Text -> NsqLookup m OK
+deleteTopic :: MonadIO m => Topic -> NsqLookup m OK
 deleteTopic topic =
   runRoute (deleteTopicRoute topic)
 
-tombstoneTopicProducer :: MonadIO m => Text -> Text -> NsqLookup m OK
+tombstoneTopicProducer :: MonadIO m => Topic -> Text -> NsqLookup m OK
 tombstoneTopicProducer topic node =
   runRoute (tombstoneTopicProducerRoute topic node)
 
-deleteChannel :: MonadIO m => Text -> Text -> NsqLookup m OK
+deleteChannel :: MonadIO m => Topic -> Channel -> NsqLookup m OK
 deleteChannel topic channel =
   runRoute (deleteChannelRoute topic channel)
 
@@ -109,14 +111,14 @@ topicsRoute =
         , httpMethod = "GET"
         }
 
-lookupRoute :: Text -> Route
+lookupRoute :: Topic -> Route
 lookupRoute topic =
   Route { urlPieces = [ "lookup" ]
         , urlParams = ["topic" =. topic]
         , httpMethod = "GET"
         }
 
-channelsRoute :: Text -> Route
+channelsRoute :: Topic -> Route
 channelsRoute topic =
   Route { urlPieces = [ "channels" ]
         , urlParams = ["topic" =. topic]
@@ -130,21 +132,21 @@ nodesRoute =
         , httpMethod = "GET"
         }
 
-deleteTopicRoute :: Text -> Route
+deleteTopicRoute :: Topic -> Route
 deleteTopicRoute topic =
   Route { urlPieces = [ "delete_topic" ]
         , urlParams = ["topic" =. topic]
         , httpMethod = "GET"
         }
 
-tombstoneTopicProducerRoute :: Text -> Text -> Route
+tombstoneTopicProducerRoute :: Topic -> Text -> Route
 tombstoneTopicProducerRoute topic node =
   Route { urlPieces = [ "tombstone_topic_producer" ]
         , urlParams = ["topic" =. topic, "node" =. node]
         , httpMethod = "GET"
         }
 
-deleteChannelRoute :: Text -> Text -> Route
+deleteChannelRoute :: Topic -> Channel -> Route
 deleteChannelRoute topic channel =
   Route { urlPieces = [ "delete_channel" ]
         , urlParams = ["topic" =. topic, "channel" =. channel]
@@ -214,7 +216,7 @@ instance ErrorReceivable Error where
       _ -> Nothing
 
 -- topics
-newtype Topics = Topics { topicsTopicks :: [Text] }
+newtype Topics = Topics { topicsTopicks :: [Topic] }
               deriving (Show, Generic)
 
 instance FromJSON Topics where
@@ -230,7 +232,7 @@ data Producer = Producer {
   , producerHttpPort :: !Word16
   , producerVersion :: !Text
   , producerTombstones :: !(Maybe [Bool])
-  , producerTopics :: !(Maybe [Text])
+  , producerTopics :: !(Maybe [Topic])
   }
                 deriving (Show, Generic)
 
@@ -239,7 +241,7 @@ instance FromJSON Producer where
 
 data Lookup = Lookup {
   lookupProducers  :: ![Producer]
-  , lookupChannels :: ![Text]
+  , lookupChannels :: ![Channel]
   }
               deriving (Show, Generic)
 
@@ -247,7 +249,7 @@ instance FromJSON Lookup where
   parseJSON = genericParseJSON $ aesonPrefix snakeCase
 
 -- channels
-newtype Channels = Channels { channelsChannels :: [Text] }
+newtype Channels = Channels { channelsChannels :: [Channel] }
               deriving (Show, Generic)
 
 instance FromJSON Channels where

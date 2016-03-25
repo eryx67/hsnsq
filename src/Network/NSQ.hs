@@ -55,3 +55,5 @@ import Network.NSQ.Types
 import Network.NSQ.Parser
 import Network.NSQ.Identify
 import Network.NSQ.Connection
+
+-- | Interfacing nsqlookupd "Network.NSQ.Lookup"
