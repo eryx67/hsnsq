@@ -4,7 +4,7 @@ packages:
   - '.'
   - location:
       git: git@github.com:eryx67/api-builder.git
-      commit: d7292cf664464a38a95a76811c3445d41609621b
+      commit: cd59e846d286d55358ccf2f7e6ccdb396020364d
 extra-deps:
 - attoparsec-binary-0.2
 resolver: lts-5.6
