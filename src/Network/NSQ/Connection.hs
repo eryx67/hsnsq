@@ -15,12 +15,14 @@ module Network.NSQ.Connection
 
     ) where
 
-import           ClassyPrelude hiding (log)
 import           Control.Concurrent.Async.Lifted (race_)
+import           Control.Concurrent.STM
+import           Control.Monad.Catch (MonadMask)
 import           Control.Monad.Logger
 import           Control.Monad.State.Strict
 import           Control.Monad.Trans.Control (MonadBaseControl)
 import qualified Data.ByteString as BS
+import           Data.Text (Text)
 import qualified Data.Text as T
 import           Formatting
 import           Network.HostName
@@ -28,12 +30,13 @@ import           Pipes
 import qualified Pipes.Attoparsec as PA
 import qualified Pipes.Network.TCP as PNT
 import qualified Pipes.Prelude as PP
+import           Prelude hiding (log)
 
+import qualified Network.NSQ.Identify as NSQ
+import qualified Network.NSQ.Parser as NSQ
 import           Network.NSQ.Types (NSQConnection(..), Message, Command, LogName
                                    , server, port, logName, identConf)
 import qualified Network.NSQ.Types as NSQ
-import qualified Network.NSQ.Identify as NSQ
-import qualified Network.NSQ.Parser as NSQ
 
 
 -- TODO: standardize on some sort of logger hierchary (nsq server/topic?)
@@ -129,7 +132,7 @@ nsqParserErrorLogging l producer = do
                 Right x -> do
                   lift $ $logDebugS l (sformat ("msg: " % shown) x)
                   yield x
-                Left x  -> lift $ $logErrorS l (tshow x)
+                Left x  -> lift $ $logErrorS l (T.pack $ show x)
             nsqParserErrorLogging l rest
 
 -- | Format outbound NSQ Commands
@@ -162,7 +165,7 @@ command l topicQueue = forever $ do
       lift $ $logInfoS l ("Error: Server closed queue")
     -- TODO: should pass it onto the client or have a callback
     NSQ.Error e             ->
-      lift $ $logErrorS l ("Error: " ++ tshow e)
+      lift $ $logErrorS l $ sformat ("Error: " % shown) e
     NSQ.Message _ _ _ _     ->
       liftIO $ atomically $ writeTQueue topicQueue msg
     -- TODO: should pass it onto the client or have a callback

@@ -11,19 +11,16 @@ module Network.NSQ.Identify
 
     ) where
 
-import ClassyPrelude hiding (take)
-
-import qualified Data.Map.Strict as Map
-
-import qualified Data.ByteString.Lazy as BL
-
-import qualified Data.Text as T
-
-import Data.Aeson ((.=))
+import           Data.Aeson ((.=))
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Types as A
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.Map.Strict as Map
+import           Data.Maybe
+import qualified Data.Text as T
+import           Prelude hiding (take)
 
-import Network.NSQ.Types
+import           Network.NSQ.Types
 
 -- | Build a default 'IdentifyMetadata' that makes sense which is
 -- basically just setting the client 'Identification' and leaving

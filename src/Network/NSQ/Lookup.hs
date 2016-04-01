@@ -36,17 +36,22 @@ module Network.NSQ.Lookup
        , APIError(..)
        ) where
 
-import ClassyPrelude hiding (Builder, lookup)
+import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson hiding (Result, Error)
 import Data.Aeson.Casing
+import Data.Text (Text)
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TLE
 import Data.Word (Word16)
+import GHC.Generics (Generic)
 import Network.API.Builder
 import Network.HTTP.Client (Manager, responseBody)
+import Prelude hiding (lookup)
 import Text.Read (readEither)
 
+
 import Network.NSQ.Types (Channel, Topic)
+
 
 -- | API monad
 type NsqLookup m a = APIT () Error m a

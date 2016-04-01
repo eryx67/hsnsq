@@ -18,17 +18,21 @@ extra-source-files:
 library
     build-depends: aeson,
                    aeson-casing,
+                   api-builder,
                    async,
                    attoparsec,
                    attoparsec-binary,
                    base >=4.5 && <4.9,
                    bytestring,
-                   classy-prelude,
                    containers,
+                   exceptions >= 0.8.2.1,
                    formatting,
                    hostname,
-                   http-types,
                    http-client,
+                   http-types,
+                   lifted-async,
+                   lifted-base,
+                   monad-control,
                    monad-logger,
                    mtl,
                    network,
@@ -38,11 +42,7 @@ library
                    stm,
                    stm-chans,
                    text,
-                   transformers >= 0.4.2.0,
-                   monad-control,
-                   lifted-base,
-                   lifted-async,
-                   api-builder
+                   transformers >= 0.4.2.0
     exposed-modules:
                     Network.NSQ
                     Network.NSQ.Connection
